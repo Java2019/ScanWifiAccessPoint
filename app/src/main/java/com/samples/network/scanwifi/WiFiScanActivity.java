@@ -3,6 +3,7 @@ package com.samples.network.scanwifi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -72,16 +73,22 @@ public class WiFiScanActivity extends AppCompatActivity
         text = (TextView)findViewById(R.id.text);
         checkBox =  (CheckBox)findViewById(R.id.checkbox);
         button = (Button)findViewById(R.id.bStart);
+        manager = (WifiManager)getSystemService(WIFI_SERVICE);
+        this.registerReceiver(receiver, new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION));
+        checkBox.setEnabled(manager.isWifiEnabled());
+        checkBox.setOnCheckedChangeListener(this);
+        button.setOnClickListener(this);
 
     }
 
     @Override
     public void onClick(View view) {
-
+        this.registerReceiver(receiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        manager.startScan();
     }
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-
+        manager.setWifiEnabled(b);
     }
 }
